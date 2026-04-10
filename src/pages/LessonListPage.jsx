@@ -9,7 +9,7 @@ const wrap = {
     marginRight: 'auto',
     paddingLeft: '24px',
     paddingRight: '24px',
-    paddingTop: '40px',
+    paddingTop: '20px',
     paddingBottom: '80px',
 };
 
@@ -20,10 +20,10 @@ export default function LessonListPage() {
 
     if (!course) {
         return (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '16px', color: '#64748b' }}>
-                <BookOpen size={40} style={{ opacity: 0.3 }} />
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '16px', color: '#333' }}>
+                <BookOpen size={40} style={{ opacity: 0.5 }} />
                 <p style={{ fontSize: '1rem', fontWeight: 500 }}>Course not found</p>
-                <Link to="/" style={{ fontSize: '0.875rem', color: '#818cf8' }}>← Back to Home</Link>
+                <Link to="/" style={{ fontSize: '0.875rem', color: '#008080' }}>← Back to Home</Link>
             </div>
         );
     }
@@ -35,60 +35,48 @@ export default function LessonListPage() {
     const totalMins = Math.round(totalDuration / 60);
 
     return (
-        <div style={{ width: '100%' }}>
+        <div className="page-enter" style={{ width: '100%' }}>
             <div style={wrap}>
 
                 {/* Back */}
                 <button
                     onClick={() => navigate('/')}
-                    style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', fontWeight: 500, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', marginBottom: '32px', padding: 0 }}
-                    onMouseEnter={e => e.currentTarget.style.color = '#818cf8'}
-                    onMouseLeave={e => e.currentTarget.style.color = '#64748b'}
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', fontWeight: 600, color: '#999', background: 'none', border: 'none', cursor: 'pointer', marginBottom: '24px', padding: 0 }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#008080'}
+                    onMouseLeave={e => e.currentTarget.style.color = '#999'}
                 >
                     <ChevronLeft size={15} />
                     All Courses
                 </button>
 
                 {/* Course Header */}
-                <div style={{
-                    position: 'relative',
-                    overflow: 'hidden',
-                    borderRadius: '16px',
-                    border: '1px solid rgba(255,255,255,0.07)',
-                    background: 'rgba(255,255,255,0.03)',
+                <div className="glass-card" style={{
+                    borderRadius: '20px',
                     padding: '28px 32px',
-                    marginBottom: '32px',
+                    marginBottom: '24px',
                 }}>
-                    {/* Glow */}
-                    <div style={{
-                        position: 'absolute', right: '-40px', top: '-40px',
-                        width: '160px', height: '160px', borderRadius: '50%',
-                        background: `linear-gradient(135deg, ${course.gradientFrom}, ${course.gradientTo})`,
-                        opacity: 0.18, filter: 'blur(40px)', pointerEvents: 'none',
-                    }} />
-
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', position: 'relative' }}>
-                        {/* Icon */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
                         <div style={{
                             flexShrink: 0, width: '64px', height: '64px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            borderRadius: '14px',
-                            background: `linear-gradient(135deg, ${course.gradientFrom}, ${course.gradientTo})`,
+                            borderRadius: '16px',
+                            backgroundColor: course.accentColor,
                             fontSize: '28px',
+                            boxShadow: `0 6px 20px ${course.accentColor}40`,
                         }}>
                             {course.icon}
                         </div>
                         <div>
-                            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#fff', marginBottom: '4px' }}>{course.title}</h1>
-                            <p style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: '12px' }}>{course.description}</p>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.75rem', color: '#64748b' }}>
+                            <h1 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#333', marginBottom: '4px', letterSpacing: '-0.02em' }}>{course.title}</h1>
+                            <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '14px' }}>{course.description}</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.75rem', color: '#888' }}>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                     <BookOpen size={12} /> {course.lessons.length} lessons
                                 </span>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                     <Clock size={12} /> ~{totalMins} min total
                                 </span>
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#34d399' }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#4ade80' }}>
                                     <CheckCircle size={12} /> Free access
                                 </span>
                             </div>
@@ -97,7 +85,7 @@ export default function LessonListPage() {
                 </div>
 
                 {/* Section label */}
-                <p style={{ fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#475569', marginBottom: '12px' }}>
+                <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#999', marginBottom: '12px' }}>
                     Course Content
                 </p>
 
@@ -107,39 +95,32 @@ export default function LessonListPage() {
                         <button
                             key={lesson.id}
                             onClick={() => navigate(`/course/${courseId}/lesson/${lesson.id}`)}
+                            className="card-3d"
                             style={{
                                 display: 'flex', alignItems: 'center', gap: '16px',
-                                borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)',
-                                background: 'rgba(255,255,255,0.03)',
+                                borderRadius: '14px',
+                                background: '#fff',
+                                border: '1px solid #e0e0e0',
                                 padding: '14px 20px', textAlign: 'left', cursor: 'pointer',
-                                transition: 'border-color 0.2s, background 0.2s',
                                 width: '100%',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                             }}
-                            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(99,102,241,0.35)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
                         >
-                            {/* Number badge */}
                             <div style={{
-                                flexShrink: 0, width: '32px', height: '32px',
+                                flexShrink: 0, width: '34px', height: '34px',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                borderRadius: '50%', background: 'rgba(255,255,255,0.06)',
-                                fontSize: '0.7rem', fontWeight: 700, color: '#64748b',
+                                borderRadius: '10px', backgroundColor: `${course.accentColor}18`,
+                                fontSize: '0.75rem', fontWeight: 800, color: course.accentColor,
                             }}>
                                 {String(index + 1).padStart(2, '0')}
                             </div>
-
-                            {/* Title */}
-                            <p style={{ flex: 1, fontSize: '0.875rem', fontWeight: 500, color: '#cbd5e1' }}>
+                            <p style={{ flex: 1, fontSize: '0.9rem', fontWeight: 600, color: '#333' }}>
                                 {lesson.title}
                             </p>
-
-                            {/* Duration */}
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#475569', flexShrink: 0 }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#999', flexShrink: 0 }}>
                                 <Clock size={11} /> {lesson.duration}
                             </span>
-
-                            {/* Play */}
-                            <PlayCircle size={20} color="#334155" style={{ flexShrink: 0 }} />
+                            <PlayCircle size={20} color={course.accentColor} style={{ flexShrink: 0, opacity: 0.5 }} />
                         </button>
                     ))}
                 </div>

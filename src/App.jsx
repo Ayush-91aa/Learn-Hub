@@ -7,9 +7,9 @@ import VideoPage from './pages/VideoPage';
 export default function App() {
     return (
         <BrowserRouter>
-            <div className="min-h-screen" style={{ backgroundColor: '#080c14' }}>
+            <div style={{ minHeight: '100vh' }}>
                 <Navbar />
-                <main className="w-full">
+                <main style={{ width: '100%' }}>
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/course/:courseId" element={<LessonListPage />} />

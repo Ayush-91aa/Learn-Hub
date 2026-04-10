@@ -3,9 +3,7 @@ export const courses = [
         id: 'python',
         title: 'Python',
         icon: '🐍',
-        gradientFrom: '#eab308',
-        gradientTo: '#ca8a04',
-        color: 'from-yellow-500 to-yellow-600',
+        accentColor: '#F0C040',
         description: 'Learn Python from scratch to advanced',
         lessons: [
             {
@@ -78,9 +76,7 @@ export const courses = [
         id: 'cpp',
         title: 'C++',
         icon: '⚙️',
-        gradientFrom: '#3b82f6',
-        gradientTo: '#1d4ed8',
-        color: 'from-blue-500 to-blue-700',
+        accentColor: '#58A6FF',
         description: 'Master C++ for systems programming',
         lessons: [
             { id: 1, title: 'Part 1: Introduction to C++', duration: '14:00' },
@@ -96,9 +92,7 @@ export const courses = [
         id: 'llm',
         title: 'LLM',
         icon: '🤖',
-        gradientFrom: '#8b5cf6',
-        gradientTo: '#6d28d9',
-        color: 'from-violet-500 to-purple-700',
+        accentColor: '#BC8CF2',
         description: 'Understand Large Language Models',
         lessons: [
             { id: 1, title: 'Part 1: Introduction to LLMs', duration: '16:00' },
@@ -113,9 +107,7 @@ export const courses = [
         id: 'html',
         title: 'HTML',
         icon: '🌐',
-        gradientFrom: '#f97316',
-        gradientTo: '#ef4444',
-        color: 'from-orange-500 to-red-500',
+        accentColor: '#FF7B54',
         description: 'Build the structure of the web',
         lessons: [
             { id: 1, title: 'Part 1: Introduction to HTML', duration: '10:00' },
@@ -130,9 +122,7 @@ export const courses = [
         id: 'css',
         title: 'CSS',
         icon: '🎨',
-        gradientFrom: '#38bdf8',
-        gradientTo: '#0891b2',
-        color: 'from-sky-400 to-cyan-600',
+        accentColor: '#00D4AA',
         description: 'Style beautiful, responsive layouts',
         lessons: [
             { id: 1, title: 'Part 1: Introduction to CSS', duration: '11:00' },
@@ -148,9 +138,7 @@ export const courses = [
         id: 'javascript',
         title: 'JavaScript',
         icon: '⚡',
-        gradientFrom: '#facc15',
-        gradientTo: '#f59e0b',
-        color: 'from-yellow-400 to-amber-500',
+        accentColor: '#F778BA',
         description: 'Power the web with JavaScript',
         lessons: [
             { id: 1, title: 'Part 1: Introduction to JavaScript', duration: '13:00' },

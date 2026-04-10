@@ -14,23 +14,23 @@ html {
 
 body {
     font-family: 'Inter', system-ui, sans-serif;
-    background-color: #080c14;
-    color: #e2e8f0;
+    background: #F9F9F9;
+    color: #333333;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-    width: 5px;
+    width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #0f172a;
+    background: #eee;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #4f46e5;
+    background: #ccc;
     border-radius: 10px;
 }
 
@@ -38,9 +38,8 @@ body {
 @keyframes fadeUp {
     from {
         opacity: 0;
-        transform: translateY(24px);
+        transform: translateY(30px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -48,47 +47,64 @@ body {
 }
 
 @keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-8px);
-    }
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
 }
 
-@keyframes pulse-ring {
-    0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5);
-    }
+@keyframes pulse-soft {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+}
 
-    70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 12px rgba(99, 102, 241, 0);
-    }
-
-    100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
-    }
+@keyframes shimmer-bg {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
 }
 
 .page-enter {
-    animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.card-float:hover {
-    transform: translateY(-6px);
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.card-float {
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+.float-anim {
+    animation: float 3s ease-in-out infinite;
 }
 
 .pulse-play {
-    animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+    animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* 3D Card */
+.card-3d {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.card-3d:hover {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 8px 20px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+}
+
+/* Card styles */
+.glass {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.glass-strong {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.glass-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.06),
+        0 1px 4px rgba(0, 0, 0, 0.04);
 }

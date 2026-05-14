@@ -2,6 +2,8 @@ import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { courses } from '../data/courseData';
 import { ArrowRight, BookOpen, ChevronLeft, ChevronRight, Sparkles, Code2, Terminal, Cpu } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { getAllProgress } from '../utils/progressUtils';
 
 const wrap = {
   width: '100%',
@@ -330,9 +332,13 @@ function Carousel3D() {
 }
 
 /* ── Glass Card with Parallax ── */
-function GlassCard({ course, onClick, parallaxOffset }) {
+function GlassCard({ course, onClick, parallaxOffset, progressData }) {
   const cardRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+
+  const completedCount = progressData?.completedLessons?.length || 0;
+  const totalCount = course.lessons.length;
+  const percent = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
   const handleMouseMove = (e) => {
     const card = cardRef.current;
@@ -458,7 +464,7 @@ function GlassCard({ course, onClick, parallaxOffset }) {
       </p>
 
       {/* Footer with glass pill */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', transform: 'translateZ(18px)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', transform: 'translateZ(18px)', marginBottom: completedCount > 0 ? '12px' : 0 }}>
         <div
           style={{
             display: 'flex',
@@ -472,7 +478,7 @@ function GlassCard({ course, onClick, parallaxOffset }) {
           }}
         >
           <BookOpen size={13} />
-          {course.lessons.length} lessons
+          {completedCount > 0 ? `${completedCount}/${totalCount} done` : `${totalCount} lessons`}
         </div>
         <span
           style={{
@@ -490,9 +496,22 @@ function GlassCard({ course, onClick, parallaxOffset }) {
             transform: isHovered ? 'translateX(4px)' : 'translateX(0)',
           }}
         >
-          Start <ArrowRight size={14} />
+          {completedCount > 0 ? (completedCount === totalCount ? 'Review' : 'Continue') : 'Start'} <ArrowRight size={14} />
         </span>
       </div>
+
+      {/* Progress Bar (if started) */}
+      {completedCount > 0 && (
+        <div style={{ transform: 'translateZ(18px)', width: '100%' }}>
+          <div style={{ height: '4px', borderRadius: '2px', background: 'rgba(30, 41, 59, 0.08)', overflow: 'hidden' }}>
+            <div style={{
+              height: '100%', borderRadius: '2px',
+              background: `linear-gradient(90deg, ${course.accentColor}, ${course.accentColor}cc)`,
+              width: `${percent}%`, transition: 'width 1s ease',
+            }} />
+          </div>
+        </div>
+      )}
     </button>
   );
 }
@@ -548,6 +567,15 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [scrollY, setScrollY] = useState(0);
   const sectionRef = useRef(null);
+  const { user } = useAuth();
+  const [progress, setProgress] = useState({});
+
+  useEffect(() => {
+    if (user) {
+      const courseIds = courses.map(c => c.id);
+      getAllProgress(user.uid, courseIds).then(p => setProgress(p));
+    }
+  }, [user]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -716,6 +744,7 @@ export default function HomePage() {
               course={course}
               onClick={() => navigate(`/course/${course.id}`)}
               parallaxOffset={getParallaxOffset(index, courses.length)}
+              progressData={progress[course.id]}
             />
           ))}
         </div>

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, X, BookOpen, User, Sparkles } from 'lucide-react';
 import { courses } from '../data/courseData';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar() {
   const [query, setQuery] = useState('');
@@ -10,6 +11,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const profileRef = useRef(null);
+  const { user, logout } = useAuth();
 
   // Track scroll for navbar glass effect enhancement
   useEffect(() => {
@@ -47,6 +49,11 @@ export default function Navbar() {
     setQuery('');
     setSearchResults([]);
     navigate(`/course/${id}`);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
   };
 
   return (
@@ -238,17 +245,30 @@ export default function Navbar() {
                   background: 'linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.4), transparent)',
                 }} />
 
-                <div style={{
-                  width: '72px', height: '72px', borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  margin: '0 auto 14px',
-                  boxShadow: '0 8px 28px rgba(14, 165, 233, 0.35), 0 0 0 4px rgba(255, 255, 255, 0.8), 0 0 0 5px rgba(14, 165, 233, 0.2)',
-                }}>
-                  <User size={32} color="#fff" />
-                </div>
+                {user?.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt="Profile"
+                    referrerPolicy="no-referrer"
+                    style={{
+                      width: '72px', height: '72px', borderRadius: '50%',
+                      margin: '0 auto 14px', display: 'block',
+                      boxShadow: '0 8px 28px rgba(14, 165, 233, 0.35), 0 0 0 4px rgba(255, 255, 255, 0.8), 0 0 0 5px rgba(14, 165, 233, 0.2)',
+                    }}
+                  />
+                ) : (
+                  <div style={{
+                    width: '72px', height: '72px', borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    margin: '0 auto 14px',
+                    boxShadow: '0 8px 28px rgba(14, 165, 233, 0.35), 0 0 0 4px rgba(255, 255, 255, 0.8), 0 0 0 5px rgba(14, 165, 233, 0.2)',
+                  }}>
+                    <User size={32} color="#fff" />
+                  </div>
+                )}
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1e293b', marginBottom: '4px' }}>
-                  Ayush Kumar
+                  {user?.displayName || 'Student'}
                 </h3>
                 <div style={{
                   display: 'inline-flex', alignItems: 'center', gap: '6px',
@@ -299,8 +319,39 @@ export default function Navbar() {
                   </div>
                   <div>
                     <p style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 500, marginBottom: '2px' }}>Email</p>
-                    <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b' }}>ayush.kumar@gmail.com</p>
+                    <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b' }}>
+                      {user?.email || 'Not available'}
+                    </p>
                   </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+                  <button
+                    onClick={() => { setProfileOpen(false); navigate('/dashboard'); }}
+                    style={{
+                      flex: 1, padding: '10px', borderRadius: '12px',
+                      background: 'rgba(14, 165, 233, 0.1)', border: 'none',
+                      color: '#0ea5e9', fontSize: '0.85rem', fontWeight: 700,
+                      cursor: 'pointer', transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(14, 165, 233, 0.15)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(14, 165, 233, 0.1)'}
+                  >
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    style={{
+                      flex: 1, padding: '10px', borderRadius: '12px',
+                      background: 'rgba(239, 68, 68, 0.1)', border: 'none',
+                      color: '#ef4444', fontSize: '0.85rem', fontWeight: 700,
+                      cursor: 'pointer', transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
+                  >
+                    Log Out
+                  </button>
                 </div>
               </div>
             </div>

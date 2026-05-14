@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Download, Play, Clock, FileText, X, BookOpen, AlertCircle, Maximize, Pause } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Play, Clock, FileText, X, BookOpen, AlertCircle, Pause, CheckCircle } from 'lucide-react';
 import { getCourseById } from '../data/courseData';
 import AIChatbot from '../components/AIChatbot';
+import { useAuth } from '../contexts/AuthContext';
+import { markLessonComplete, getCourseProgress } from '../utils/progressUtils';
 
 const outerWrap = {
   width: '100%',
@@ -159,9 +161,29 @@ export default function VideoPage() {
   const navigate = useNavigate();
   const [notesOpen, setNotesOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const { user } = useAuth();
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [completedLessons, setCompletedLessons] = useState([]);
 
   const course = getCourseById(courseId);
   const lesson = course?.lessons.find((l) => l.id === Number(lessonId));
+
+  useEffect(() => {
+    if (user && course) {
+      getCourseProgress(user.uid, course.id).then(progress => {
+        const completed = progress.completedLessons || [];
+        setCompletedLessons(completed);
+        setIsCompleted(completed.includes(Number(lessonId)));
+      });
+    }
+  }, [user, courseId, lessonId]);
+
+  const handleMarkComplete = async () => {
+    if (!user || isCompleted) return;
+    await markLessonComplete(user.uid, course.id, Number(lessonId));
+    setIsCompleted(true);
+    setCompletedLessons(prev => [...prev, Number(lessonId)]);
+  };
 
   if (!course || !lesson) {
     return (
@@ -178,7 +200,7 @@ export default function VideoPage() {
   const currentIndex = course.lessons.findIndex((l) => l.id === Number(lessonId));
   const prevLesson = course.lessons[currentIndex - 1];
   const nextLesson = course.lessons[currentIndex + 1];
-  const hasNotes = Boolean(lesson.videoUrl);
+  const hasNotes = Boolean(lesson.notes);
   const accent = course.accentColor;
 
   const ytVideoId = hasNotes ? lesson.videoUrl.split('/embed/')[1]?.split('?')[0] : null;
@@ -313,36 +335,57 @@ export default function VideoPage() {
                 </div>
               </div>
 
-              {/* Glass Notes Button */}
-              <button
-                onClick={() => hasNotes && setNotesOpen(true)}
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px',
-                  width: '100%', padding: '18px', borderRadius: '18px', border: 'none',
-                  cursor: hasNotes ? 'pointer' : 'not-allowed',
-                  background: hasNotes
-                    ? 'linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.9))'
-                    : 'rgba(255,255,255,0.3)',
-                  fontSize: '1rem', fontWeight: 700,
-                  color: hasNotes ? accent : 'rgba(30, 41, 59, 0.4)',
-                  boxShadow: hasNotes ? '0 8px 28px rgba(30, 41, 59, 0.08)' : 'none',
-                  opacity: hasNotes ? 1 : 0.6,
-                  transition: 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
-                  border: hasNotes ? '1px solid rgba(255, 255, 255, 0.6)' : '1px solid rgba(255, 255, 255, 0.3)',
-                  backdropFilter: 'blur(12px)',
-                }}
-                onMouseEnter={e => { if (hasNotes) { e.currentTarget.style.transform = 'scale(1.02) translateY(-2px)'; } }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1) translateY(0)'; }}
-              >
-                <div style={{
-                  width: '40px', height: '40px', borderRadius: '12px',
-                  background: `${accent}15`, border: `1px solid ${accent}25`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {hasNotes ? <FileText size={18} color={accent} /> : <AlertCircle size={18} color="#94a3b8" />}
-                </div>
-                {hasNotes ? 'View & Download Notes' : 'Notes Not Available'}
-              </button>
+              {/* Mark as Complete & Notes Buttons */}
+              <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={handleMarkComplete}
+                  disabled={isCompleted}
+                  style={{
+                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
+                    padding: '16px', borderRadius: '16px', border: 'none',
+                    cursor: isCompleted ? 'default' : 'pointer',
+                    background: isCompleted
+                      ? 'rgba(16, 185, 129, 0.1)'
+                      : `linear-gradient(135deg, ${accent}, ${accent}cc)`,
+                    color: isCompleted ? '#10b981' : '#fff',
+                    fontSize: '0.9375rem', fontWeight: 700,
+                    boxShadow: isCompleted ? 'none' : `0 6px 20px ${accent}40`,
+                    transition: 'all 0.2s',
+                    border: isCompleted ? '1px solid rgba(16, 185, 129, 0.2)' : 'none',
+                  }}
+                  onMouseEnter={e => {
+                    if (!isCompleted) e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={e => {
+                    if (!isCompleted) e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <CheckCircle size={20} color={isCompleted ? '#10b981' : '#fff'} />
+                  {isCompleted ? 'Completed ✓' : 'Mark as Complete'}
+                </button>
+
+                <button
+                  onClick={() => hasNotes && setNotesOpen(true)}
+                  style={{
+                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
+                    padding: '16px', borderRadius: '16px', border: 'none',
+                    cursor: hasNotes ? 'pointer' : 'not-allowed',
+                    background: hasNotes ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.4)',
+                    fontSize: '0.9375rem', fontWeight: 700,
+                    color: hasNotes ? accent : '#94a3b8',
+                    boxShadow: hasNotes ? '0 4px 16px rgba(30, 41, 59, 0.05)' : 'none',
+                    opacity: hasNotes ? 1 : 0.6,
+                    transition: 'all 0.2s',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255, 255, 255, 0.6)',
+                  }}
+                  onMouseEnter={e => { if (hasNotes) e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseLeave={e => { if (hasNotes) e.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  <FileText size={20} color={hasNotes ? accent : '#94a3b8'} />
+                  {hasNotes ? 'View Notes' : 'No Notes'}
+                </button>
+              </div>
 
               {/* Glass Prev / Next */}
               <div style={{ display: 'flex', gap: '14px' }}>
@@ -426,6 +469,7 @@ export default function VideoPage() {
                 }}>
                   {course.lessons.map((l, i) => {
                     const isActive = l.id === Number(lessonId);
+                    const isDone = completedLessons.includes(l.id);
                     return (
                       <button
                         key={l.id}
@@ -470,6 +514,9 @@ export default function VideoPage() {
                             backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(226, 232, 240, 0.8)',
                             borderRadius: '5px', padding: '3px 7px', flexShrink: 0,
                           }}>📄</span>
+                        )}
+                        {isDone && (
+                          <CheckCircle size={14} color="#10b981" style={{ flexShrink: 0 }} />
                         )}
                         <span style={{
                           fontSize: '0.7rem',

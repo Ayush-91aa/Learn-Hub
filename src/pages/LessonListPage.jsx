@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { PlayCircle, ChevronLeft, Clock, BookOpen, CheckCircle } from 'lucide-react';
 import { getCourseById } from '../data/courseData';
+import { useAuth } from '../contexts/AuthContext';
+import { getCourseProgress } from '../utils/progressUtils';
 
 const wrap = {
   width: '100%',
@@ -16,7 +19,17 @@ const wrap = {
 export default function LessonListPage() {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [completedLessons, setCompletedLessons] = useState([]);
   const course = getCourseById(courseId);
+
+  useEffect(() => {
+    if (user && course) {
+      getCourseProgress(user.uid, course.id).then(progress => {
+        setCompletedLessons(progress.completedLessons || []);
+      });
+    }
+  }, [user, courseId]);
 
   if (!course) {
     return (
@@ -136,6 +149,24 @@ export default function LessonListPage() {
               </div>
             </div>
           </div>
+
+          {/* Progress Bar */}
+          <div style={{
+            marginTop: '24px', padding: '16px', borderRadius: '16px',
+            background: 'rgba(255, 255, 255, 0.5)', border: '1px solid rgba(255, 255, 255, 0.4)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>
+              <span>Your Progress</span>
+              <span>{completedLessons.length} of {course.lessons.length} completed ({Math.round((completedLessons.length / course.lessons.length) * 100 || 0)}%)</span>
+            </div>
+            <div style={{ height: '8px', borderRadius: '4px', background: 'rgba(30, 41, 59, 0.1)', overflow: 'hidden' }}>
+              <div style={{
+                height: '100%', background: `linear-gradient(90deg, ${course.accentColor}, ${course.accentColor}cc)`,
+                width: `${(completedLessons.length / course.lessons.length) * 100 || 0}%`,
+                transition: 'width 1s ease-out', borderRadius: '4px',
+              }} />
+            </div>
+          </div>
         </div>
 
         {/* Section Label */}
@@ -199,7 +230,11 @@ export default function LessonListPage() {
                 <Clock size={11} />
                 {lesson.duration}
               </span>
-              <PlayCircle size={22} color={course.accentColor} style={{ flexShrink: 0, opacity: 0.7 }} />
+              {completedLessons.includes(lesson.id) ? (
+                <CheckCircle size={22} color="#10b981" style={{ flexShrink: 0 }} />
+              ) : (
+                <PlayCircle size={22} color={course.accentColor} style={{ flexShrink: 0, opacity: 0.7 }} />
+              )}
             </button>
           ))}
         </div>

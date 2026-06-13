@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1052397383132",
+    "project_id": "learnhub-7b4b3",
+    "storage_bucket": "learnhub-7b4b3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1052397383132:android:51fa229a8becb3bd773319",
+        "android_client_info": {
+          "package_name": "com.ayush.learnhub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1052397383132-6lafaemrq2bggedso7pprkt1aqq7ldlp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ayush.learnhub",
+            "certificate_hash": "e45338ea90a0cf419f6cb00ece8887392ac13e47"
+          }
+        },
+        {
+          "client_id": "1052397383132-k35ksq9l80hkq2vsqr0dmbvers174ejc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIZgse0hW41FOq6lq6AJL-SOETKeZqPys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1052397383132-k35ksq9l80hkq2vsqr0dmbvers174ejc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

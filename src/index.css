@@ -378,3 +378,41 @@ body::before {
   background: rgba(14, 165, 233, 0.2);
   color: #0ea5e9;
 }
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  .nav-header {
+    padding: 8px 12px !important;
+  }
+  .nav-inner {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+  .nav-logo-text {
+    display: none !important;
+  }
+  .nav-search {
+    flex: 1;
+    max-width: none !important;
+  }
+  .nav-search input {
+    width: 100%;
+  }
+  
+  /* Layout adjustments for mobile to prevent overflow */
+  .mobile-wrap {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  /* Ensure flex containers don't break the layout */
+  .mobile-flex-wrap {
+    flex-wrap: wrap !important;
+    max-width: 100% !important;
+  }
+
+  /* Make sure video player maintains aspect ratio but doesn't overflow */
+  .vp-grid {
+    gap: 20px !important;
+  }
+}

@@ -1,7 +1,10 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db, googleProvider } from '../firebase';
+
+import { Capacitor } from '@capacitor/core';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
 const AuthContext = createContext(null);
 
@@ -17,31 +20,36 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const userData = {
-          uid: firebaseUser.uid,
-          displayName: firebaseUser.displayName,
-          email: firebaseUser.email,
-          photoURL: firebaseUser.photoURL,
-        };
-        setUser(userData);
+      try {
+        if (firebaseUser) {
+          const userData = {
+            uid: firebaseUser.uid,
+            displayName: firebaseUser.displayName,
+            email: firebaseUser.email,
+            photoURL: firebaseUser.photoURL,
+          };
+          setUser(userData);
 
-        // Update user doc in Firestore
-        const userRef = doc(db, 'users', firebaseUser.uid);
-        const userSnap = await getDoc(userRef);
-        if (!userSnap.exists()) {
-          await setDoc(userRef, {
-            ...userData,
-            createdAt: serverTimestamp(),
-            lastLogin: serverTimestamp(),
-          });
+          // Update user doc in Firestore
+          const userRef = doc(db, 'users', firebaseUser.uid);
+          const userSnap = await getDoc(userRef);
+          if (!userSnap.exists()) {
+            await setDoc(userRef, {
+              ...userData,
+              createdAt: serverTimestamp(),
+              lastLogin: serverTimestamp(),
+            });
+          } else {
+            await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+          }
         } else {
-          await setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true });
+          setUser(null);
         }
-      } else {
-        setUser(null);
+      } catch (err) {
+        console.error('Error during auth state change:', err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -49,10 +57,21 @@ export function AuthProvider({ children }) {
 
   const login = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      if (Capacitor.isNativePlatform()) {
+        const result = await FirebaseAuthentication.signInWithGoogle({
+          clientId: '1052397383132-k35ksq9l80hkq2vsqr0dmbvers174ejc.apps.googleusercontent.com',
+        });
+        
+        // We must pass the native credential to the JS SDK so React knows we are logged in
+        const credential = GoogleAuthProvider.credential(result.credential.idToken);
+        await signInWithCredential(auth, credential);
+        
+      } else {
+        await signInWithPopup(auth, googleProvider);
+      }
     } catch (err) {
       console.error('Login failed:', err);
-      throw err;
+      throw new Error(err.message || JSON.stringify(err));
     }
   };
 

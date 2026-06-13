@@ -57,12 +57,12 @@ export default function Navbar() {
   };
 
   return (
-    <header style={{
+    <header className="nav-header" style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
       padding: '12px 24px',
       transition: 'all 0.3s ease',
     }}>
-      <div style={{
+      <div className="nav-inner" style={{
         display: 'flex', alignItems: 'center', gap: '16px',
         maxWidth: '1200px', margin: '0 auto',
         padding: '14px 24px',
@@ -86,10 +86,11 @@ export default function Navbar() {
             background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             boxShadow: '0 6px 20px rgba(14, 165, 233, 0.35), 0 0 0 2px rgba(255,255,255,0.2) inset',
+            flexShrink: 0,
           }}>
             <BookOpen size={18} color="#fff" />
           </div>
-          <span style={{
+          <span className="nav-logo-text" style={{
             fontSize: '1.125rem', fontWeight: 800,
             background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
             WebkitBackgroundClip: 'text',
@@ -107,7 +108,7 @@ export default function Navbar() {
         </Link>
 
         {/* Search with glass input */}
-        <div style={{ flex: 1, position: 'relative', maxWidth: '400px', margin: '0 auto' }}>
+        <div className="nav-search" style={{ flex: 1, position: 'relative', maxWidth: '400px', margin: '0 auto' }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: '10px',
             borderRadius: '14px',

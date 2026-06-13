@@ -1,0 +1,11 @@
+{
+  "appId": "com.ayush.learnhub",
+  "appName": "LearnHub",
+  "webDir": "dist",
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": true,
+      "providers": ["google.com"]
+    }
+  }
+}

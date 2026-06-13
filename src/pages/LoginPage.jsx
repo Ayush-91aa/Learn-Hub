@@ -19,7 +19,7 @@ export default function LoginPage() {
     try {
       await login();
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError(err.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

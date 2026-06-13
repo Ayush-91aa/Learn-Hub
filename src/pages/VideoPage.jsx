@@ -211,11 +211,11 @@ export default function VideoPage() {
         <NotesModal notes={lesson.notes} accentColor={accent} onClose={() => setNotesOpen(false)} />
       )}
 
-      <div className="page-enter" style={{ width: '100%' }}>
-        <div style={outerWrap}>
+      <div className="page-enter" style={{ width: '100%', overflowX: 'hidden' }}>
+        <div className="mobile-wrap" style={outerWrap}>
 
           {/* Glass Breadcrumb */}
-          <nav style={{
+          <nav className="mobile-flex-wrap" style={{
             display: 'flex', alignItems: 'center', gap: '10px',
             fontSize: '0.875rem', color: '#94a3b8', marginBottom: '28px',
             padding: '12px 18px', borderRadius: '14px',

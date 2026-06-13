@@ -48,8 +48,8 @@ export default function LessonListPage() {
   const totalMins = Math.round(totalDuration / 60);
 
   return (
-    <div className="page-enter" style={{ width: '100%', minHeight: '100vh' }}>
-      <div style={wrap}>
+    <div className="page-enter" style={{ width: '100%', minHeight: '100vh', overflowX: 'hidden' }}>
+      <div className="mobile-wrap" style={wrap}>
 
         {/* Glass Back Button */}
         <button
